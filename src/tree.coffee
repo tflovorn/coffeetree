@@ -21,7 +21,8 @@ class PythagorasNode
     constructor: (@origin, @basisX, @basisY, @left = null, @right = null) ->
 
     # Call spawn on @left and @right, if they exist.  If not, create them using
-    # the given angle (in radians).
+    # the given angle (in radians).  Return a list of all new nodes created by
+    # this function on this node and its children.
     spawn: (angle) ->
         newNodes = []
         if @left?
@@ -50,12 +51,27 @@ class PythagorasNode
         rightBounds = @right?.bounds()
         boundAll(@localBounds(), leftBounds, rightBounds)
 
-    # return the boundaries [(xmin, ymin), (xmax, ymax)] of this square
+    # return the boundaries [(xMin, yMin), (xMax, yMax)] of this square
     localBounds: ->
+        corners = [
+            @origin                             # bottom left
+            @origin.add(@basisX)                # bottom right
+            @origin.add(@basisY)                # top left
+            @origin.add(@basisX).add(@basisY)   # top right
+        ]
+        # need to initialize to some point in the square
+        [xMin, yMin] = [@origin.x, @origin.y]
+        [xMax, yMax] = [xMin, yMin]
+        # look through all points and find real min and max
+        for point in cornersP
+            [xMin, yMin] = [Math.min(xMin, point.x), Math.min(yMin, point.y)]
+            [xMax, yMax] = [Math.max(xMax, point.x), Math.max(yMax, point.y)]
+        return [[xMin, yMin], [xMax, yMax]]
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
-# return the area defined by [(xmin, ymin), (xmax, ymax)] within the boundaries
+# return the area defined by [(xmin, ymin), (xmax, ymax)] within boundaries,
+# which is a list of point pairs of the same form
 boundAll: (boundaries...) ->
 
 # A representation of the Pythagoras tree in its own coordinate system.
