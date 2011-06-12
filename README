@@ -1,0 +1,5 @@
+Construct a copy of the Pythagoras tree and displaying it on an html5 canvas. 
+
+Organized to exploit the correspondence between squares in the Pythagoras tree and tree data structures.
+
+uses jasmine-node (https://github.com/mhevery/jasmine-node) for unit testing

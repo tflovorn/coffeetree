@@ -51,7 +51,8 @@ class PythagorasNode
         rightBounds = @right?.bounds()
         boundAll(@localBounds(), leftBounds, rightBounds)
 
-    # return the boundaries [(xMin, yMin), (xMax, yMax)] of this square
+    # return the boundaries [(xMin, yMin), (xMax, yMax)] of the smallest square
+    # aligned with the global x-y coordinates containing this square
     localBounds: ->
         corners = [
             @origin                             # bottom left
@@ -63,14 +64,14 @@ class PythagorasNode
         [xMin, yMin] = [@origin.x, @origin.y]
         [xMax, yMax] = [xMin, yMin]
         # look through all points and find real min and max
-        for point in cornersP
+        for point in corners
             [xMin, yMin] = [Math.min(xMin, point.x), Math.min(yMin, point.y)]
             [xMax, yMax] = [Math.max(xMax, point.x), Math.max(yMax, point.y)]
-        return [[xMin, yMin], [xMax, yMax]]
+        return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
-# return the area defined by [(xmin, ymin), (xmax, ymax)] within boundaries,
+# return the area defined by [(xMin, yMin), (xMax, yMax)] within boundaries,
 # which is a list of point pairs of the same form
 boundAll: (boundaries...) ->
 
