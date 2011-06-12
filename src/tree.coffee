@@ -1,3 +1,4 @@
+# A two-dimensional vector (@x, @y)
 class Vector
     constructor: (@x, @y) ->
 
@@ -12,7 +13,10 @@ class Vector
 
     toString: -> "(#{@x}, #{@y})"
 
-# An individual node (square) in the Pythagoras tree
+# An individual node (square) in the Pythagoras tree.  The square's bottom-left
+# corner is at @origin, and the bases of its local rotated coordinates are 
+# @basisX and @basisY.  These bases have length equal to the square's side
+# length.  Each node may have two child nodes, @left and @right.
 class PythagorasNode
     constructor: (@origin, @basisX, @basisY, @left = null, @right = null) ->
 
@@ -40,8 +44,21 @@ class PythagorasNode
             newNodes.push(@right)
         return newNodes
 
+    # return the boundaries of this square and its children
+    bounds: ->
+        leftBounds = @left?.bounds()
+        rightBounds = @right?.bounds()
+        boundAll(@localBounds(), leftBounds, rightBounds)
+
+    # return the boundaries [(xmin, ymin), (xmax, ymax)] of this square
+    localBounds: ->
+
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
+# return the area defined by [(xmin, ymin), (xmax, ymax)] within the boundaries
+boundAll: (boundaries...) ->
+
+# A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree
     constructor: (@rootLength, @angle, depth) ->
         # bottom left of root node is at origin of tree coordinates
@@ -56,6 +73,9 @@ class PythagorasTree
         depthToGo = extraDepth + 1
         while depthToGo -= 1
             @root.spawn @angle
+
+    bounds: ->
+        @root.bounds()
 
     # Render the whole tree on to the given image
     render: (image) ->
