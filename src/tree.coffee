@@ -8,8 +8,14 @@ class Vector
     sub: (other) ->
         new Vector(@x - other.x, @y - other.y)
 
+    dot: (other) ->
+        @x * other.x + @y * other.y
+
     mult: (scalar) ->
         new Vector(scalar * @x, scalar * @y)
+
+    normSquared: ->
+        @dot(this)
 
     toString: -> "(#{@x}, #{@y})"
 
@@ -66,13 +72,23 @@ class PythagorasNode
         for point in corners
             [xMin, yMin] = [Math.min(xMin, point.x), Math.min(yMin, point.y)]
             [xMax, yMax] = [Math.max(xMax, point.x), Math.max(yMax, point.y)]
-        return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
+        return {min:new Vector(xMin, yMin), max:new Vector(xMax, yMax)}
+
+    # Return true if the point at the upper-right corner of pixel is within
+    # this node, otherwise return false.  pixel is a pair [nx, ny] of pixel 
+    # indices. globalBounds is the bounds of the whole tree, and pixelNums is 
+    # the pair [Nx, Ny] containing the total number of pixels in each direction.
+    pixelHit: (globalBounds, pixelNums, pixel) ->
+        scaleX = (globalBounds.max.x - globalBounds.min.x) / pixelNums[0]
+        scaleY = (globalBounds.max.y - globalBounds.min.y) / pixelNums[1]
+        # -- unfinished -- #
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
-# Return the pair of points [(xMin, yMin), (xMax, yMax)], where (xMin, yMin) 
-# are the minimum values of x in the given boundaries, and (xMax, yMax) are the 
-# maximum values.  boundaries is a list of points of the same form.
+# Return the pair of points {min:(xMin, yMin), max:(xMax, yMax)}, where 
+# (xMin, yMin) are the minimum values of x and y in the given boundaries, and 
+# (xMax, yMax) are the maximum values.  boundaries is a list of points of the 
+# same form.
 boundAll = (boundaries...) ->
     # return null if boundaries.length is 0 or nonexistant.
     if !boundaries.length? then return null
@@ -82,19 +98,19 @@ boundAll = (boundaries...) ->
     for bounds in boundaries when bounds?
         # initialize min/max to first non-null bounds
         if !xMin?   # if one is null, all others are too
-            [xMin, yMin] = [bounds[0].x, bounds[0].y]
-            [xMax, yMax] = [bounds[1].x, bounds[1].y]
+            [xMin, yMin] = [bounds.min.x, bounds.min.y]
+            [xMax, yMax] = [bounds.max.x, bounds.max.y]
         # min/max have been initialized, check if they should change
         else
             [xMin, yMin] = [
-                Math.min(xMin, bounds[0].x)
-                Math.min(yMin, bounds[0].y)
+                Math.min(xMin, bounds.min.x)
+                Math.min(yMin, bounds.min.y)
             ]
             [xMax, yMax] = [
-                Math.max(xMax, bounds[1].x)
-                Math.max(yMax, bounds[1].y)
+                Math.max(xMax, bounds.max.x)
+                Math.max(yMax, bounds.max.y)
             ]
-    return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
+    {min: new Vector(xMin, yMin), max: new Vector(xMax, yMax)}
 
 # A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree
@@ -121,4 +137,4 @@ class PythagorasTree
 
     toString: -> @root.toString()
 
-module.exports = {PythagorasTree: PythagorasTree}
+module.exports = {PythagorasTree: PythagorasTree, Vector:Vector}

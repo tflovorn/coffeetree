@@ -32,11 +32,11 @@ describe 'PythagorasTree', ->
 
 # known is [xMin, yMin, xMax, yMax]
 checkHasBounds = (bounds, known) ->
-    minCorrect = bounds[0].x == known[0] and bounds[0].y == known[1]
-    maxCorrect = bounds[1].x == known[2] and bounds[1].y == known[3]
+    minCorrect = bounds.min.x == known[0] and bounds.min.y == known[1]
+    maxCorrect = bounds.max.x == known[2] and bounds.max.y == known[3]
     minCorrect and maxCorrect
 
 checkWithinBounds = (bounds, known) ->
-    minWithin = bounds[0].x >= known[0] and bounds[0].y >= known[1]
-    maxWithin = bounds[1].x <= known[2] and bounds[1].y <= known[3]
+    minWithin = bounds.min.x >= known[0] and bounds.min.y >= known[1]
+    maxWithin = bounds.max.x <= known[2] and bounds.max.y <= known[3]
     minWithin and maxWithin
