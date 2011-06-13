@@ -79,18 +79,24 @@ class PythagorasNode
 boundAll: (boundaries...) ->
     # return null if boundaries.length is 0 or nonexistant.
     if !boundaries.length? then return null
-    # initialize to first point
-    [xMin, yMin] = [@boundaries[0][0].x, @boundaries[0][0].y]
-    [xMax, yMax] = [@boundaries[0][1].x, @boundaries[0][1].y]
-    for bounds in boundaries
-        [xMin, yMin] = [
-            Math.min(xMin, bounds[0].x)
-            Math.min(yMin, bounds[0].y)
-        ]
-        [xMax, yMax] = [
-            Math.max(xMax, bounds[1].x)
-            Math.max(yMax, bounds[1].y)
-        ]
+    # declare these to fix scope
+    [xMin, yMin] = [null, null]
+    [xMax, yMax] = [null, null]
+    for bounds in boundaries when bounds?
+        # initialize min/max to first non-null bounds
+        if !xMin?   # if one is null, all others are too
+            [xMin, yMin] = [bounds[0].x, bounds[0].y]
+            [xMax, yMax] = [bounds[1].x, bounds[1].y]
+        # min/max have been initialized, check if they should change
+        else
+            [xMin, yMin] = [
+                Math.min(xMin, bounds[0].x)
+                Math.min(yMin, bounds[0].y)
+            ]
+            [xMax, yMax] = [
+                Math.max(xMax, bounds[1].x)
+                Math.max(yMax, bounds[1].y)
+            ]
     return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
 # A representation of the Pythagoras tree in its own coordinate system.
