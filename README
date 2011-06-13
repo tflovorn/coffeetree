@@ -5,10 +5,10 @@ Organized to exploit the correspondence between squares in the Pythagoras tree a
 Written in CoffeeScript (http://jashkenas.github.com/coffee-script/)
 
 uses jasmine-node (https://github.com/mhevery/jasmine-node) for unit testing
--run with:
+-run tests with:
 node lib/jasmine-node/cli.js . --coffee --verbose
 
-requires npm packages coffee-script and jasmine-node
+unit tests require npm packages coffee-script and jasmine-node
 -get by running in repository root:
 npm install coffee-script
 npm install jasmine-node

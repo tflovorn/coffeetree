@@ -25,10 +25,10 @@ class PythagorasNode
     # this function on this node and its children.
     spawn: (angle) ->
         newNodes = []
+        [cos, sin] = [Math.cos(angle), Math.sin(angle)]
         if @left?
             newNodes.concat(@left.spawn angle)
         else
-            [cos, sin] = [Math.cos(angle), Math.sin(angle)]
             leftOrigin = @origin.add(@basisY)
             leftX = @basisX.mult(cos * cos).add(@basisY.mult(sin * cos))
             leftY = @basisX.mult(-sin * cos).add(@basisY.mult(cos * cos))
@@ -37,7 +37,6 @@ class PythagorasNode
         if @right?
             newNodes.concat(@right.spawn angle)
         else
-            [cos, sin] = [Math.cos(angle), Math.sin(angle)]
             rightOrigin = @origin.add(@basisX.mult(cos * cos).add(@basisY.mult(sin * cos + 1)))
             rightX = @basisX.mult(sin * sin).sub(@basisY.mult(sin * cos))
             rightY = @basisX.mult(sin * cos).add(@basisY.mult(sin * sin))
@@ -113,6 +112,7 @@ class PythagorasTree
         while depthToGo -= 1
             @root.spawn @angle
 
+    # Return the boundary points for the whole tree.
     bounds: ->
         @root.bounds()
 
@@ -122,5 +122,3 @@ class PythagorasTree
     toString: -> @root.toString()
 
 module.exports = {PythagorasTree: PythagorasTree}
-
-#alert (new PythagorasTree(1.0, Math.PI / 4, 1)).toString()
