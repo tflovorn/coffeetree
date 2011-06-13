@@ -73,9 +73,25 @@ class PythagorasNode
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
-# return the area defined by [(xMin, yMin), (xMax, yMax)] within boundaries,
-# which is a list of point pairs of the same form
+# Return the pair of points [(xMin, yMin), (xMax, yMax)], where (xMin, yMin) 
+# are the minimum values of x in the given boundaries, and (xMax, yMax) are the 
+# maximum values.  boundaries is a list of points of the same form.
 boundAll: (boundaries...) ->
+    # return null if boundaries.length is 0 or nonexistant.
+    if !boundaries.length? then return null
+    # initialize to first point
+    [xMin, yMin] = [@boundaries[0][0].x, @boundaries[0][0].y]
+    [xMax, yMax] = [@boundaries[0][1].x, @boundaries[0][1].y]
+    for bounds in boundaries
+        [xMin, yMin] = [
+            Math.min(xMin, bounds[0].x)
+            Math.min(yMin, bounds[0].y)
+        ]
+        [xMax, yMax] = [
+            Math.max(xMax, bounds[1].x)
+            Math.max(yMax, bounds[1].y)
+        ]
+    return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
 # A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree
