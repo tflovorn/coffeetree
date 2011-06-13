@@ -1,5 +1,3 @@
-
-
 # A two-dimensional vector (@x, @y)
 class Vector
     constructor: (@x, @y) ->
@@ -14,6 +12,32 @@ class Vector
         new Vector(scalar * @x, scalar * @y)
 
     toString: -> "(#{@x}, #{@y})"
+
+# Return the pair of points [(xMin, yMin), (xMax, yMax)], where (xMin, yMin) 
+# are the minimum values of x in the given boundaries, and (xMax, yMax) are the 
+# maximum values.  boundaries is a list of points of the same form.
+boundAll = (boundaries...) ->
+    # return null if boundaries.length is 0 or nonexistant.
+    if !boundaries.length? then return null
+    # declare these to fix scope
+    [xMin, yMin] = [null, null]
+    [xMax, yMax] = [null, null]
+    for bounds in boundaries when bounds?
+        # initialize min/max to first non-null bounds
+        if !xMin?   # if one is null, all others are too
+            [xMin, yMin] = [bounds[0].x, bounds[0].y]
+            [xMax, yMax] = [bounds[1].x, bounds[1].y]
+        # min/max have been initialized, check if they should change
+        else
+            [xMin, yMin] = [
+                Math.min(xMin, bounds[0].x)
+                Math.min(yMin, bounds[0].y)
+            ]
+            [xMax, yMax] = [
+                Math.max(xMax, bounds[1].x)
+                Math.max(yMax, bounds[1].y)
+            ]
+    return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
 # An individual node (square) in the Pythagoras tree.  The square's bottom-left
 # corner is at @origin, and the bases of its local rotated coordinates are 
@@ -72,32 +96,6 @@ class PythagorasNode
         return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
-
-# Return the pair of points [(xMin, yMin), (xMax, yMax)], where (xMin, yMin) 
-# are the minimum values of x in the given boundaries, and (xMax, yMax) are the 
-# maximum values.  boundaries is a list of points of the same form.
-boundAll: (boundaries...) ->
-    # return null if boundaries.length is 0 or nonexistant.
-    if !boundaries.length? then return null
-    # declare these to fix scope
-    [xMin, yMin] = [null, null]
-    [xMax, yMax] = [null, null]
-    for bounds in boundaries when bounds?
-        # initialize min/max to first non-null bounds
-        if !xMin?   # if one is null, all others are too
-            [xMin, yMin] = [bounds[0].x, bounds[0].y]
-            [xMax, yMax] = [bounds[1].x, bounds[1].y]
-        # min/max have been initialized, check if they should change
-        else
-            [xMin, yMin] = [
-                Math.min(xMin, bounds[0].x)
-                Math.min(yMin, bounds[0].y)
-            ]
-            [xMax, yMax] = [
-                Math.max(xMax, bounds[1].x)
-                Math.max(yMax, bounds[1].y)
-            ]
-    return [new Vector(xMin, yMin), new Vector(xMax, yMax)]
 
 # A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree

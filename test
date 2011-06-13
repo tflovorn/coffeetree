@@ -1,3 +1,4 @@
 #!/bin/sh
 
+cake build
 node lib/jasmine-node/cli.js . --coffee --verbose
