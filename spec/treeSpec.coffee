@@ -3,6 +3,13 @@ tree = require "../lib/tree"
 # for debugging --
 # console.log(str) prints str to console
 
+describe 'Vector', ->
+    it 'dot product known values', ->
+        v = new tree.Vector(3.0, 3.0)
+        expect(v.normSquared()).toEqual(18.0)
+        u = new tree.Vector(1.0, 1.0)
+        expect(v.dot(u)).toEqual(6.0)
+
 describe 'PythagorasTree', ->
 
     it 'lowest order tree should have only a root node', ->
@@ -30,6 +37,20 @@ describe 'PythagorasTree', ->
         known = [-2.5, 0.0, 3.5, 4.0]
         expect(checkWithinBounds(bounds, known)).toBeTruthy()
 
+    it 'check known values of pixelHit for 45 degree first-order tree', ->
+        firstTree = new tree.PythagorasTree(1.0, Math.PI / 4, 1)
+        bounds = firstTree.bounds()
+        pixelNums = [8, 8]  # 8x8 pixel grid
+        rootHits = [[2,4],[5,4],[3,5],[2,7],[5,7]]  # 4x4 aligned with pixels
+        rootMiss = [[1,1],[5,1],[0,4],[7,4]]
+        leftHits = [[1,1],[2,1],[1,2],[2,2]]        # 2x2 45deg to pixels
+        leftMiss = [[2,4],[3,5],[5,1],[7,7]]
+        rightHits = [[5,1],[6,1],[5,2],[6,2]]       # same as left
+        rightMiss = [[0, 0], [2,2], [5,5], [4,7]]
+        expect(checkPixels(firstTree.root, bounds, pixelNums, rootHits, rootMiss)).toBeTruthy()
+        expect(checkPixels(firstTree.root.left, bounds, pixelNums, leftHits, leftMiss)).toBeTruthy()
+        expect(checkPixels(firstTree.root.right, bounds, pixelNums, rightHits, rightMiss)).toBeTruthy()
+
 # known is [xMin, yMin, xMax, yMax]
 checkHasBounds = (bounds, known) ->
     minCorrect = bounds.min.x == known[0] and bounds.min.y == known[1]
@@ -40,3 +61,17 @@ checkWithinBounds = (bounds, known) ->
     minWithin = bounds.min.x >= known[0] and bounds.min.y >= known[1]
     maxWithin = bounds.max.x <= known[2] and bounds.max.y <= known[3]
     minWithin and maxWithin
+
+# check if all pixels in hits do hit node and all in miss don't hit done
+checkPixels = (node, bounds, pixelNums, hits, miss) ->
+    for pixel in hits #when !node.pixelHit(bounds, pixelNums, pixel)
+        didHit = node.pixelHit(bounds, pixelNums, pixel)
+        if !didHit
+            console.log(pixel, didHit)
+            return false
+    for pixel in miss #when node.pixelHit(bounds, pixelNums, pixel)
+        didHit = node.pixelHit(bounds, pixelNums, pixel)
+        if didHit
+            console.log(pixel, didHit)
+            return false
+    true

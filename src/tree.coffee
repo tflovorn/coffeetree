@@ -74,14 +74,22 @@ class PythagorasNode
             [xMax, yMax] = [Math.max(xMax, point.x), Math.max(yMax, point.y)]
         return {min:new Vector(xMin, yMin), max:new Vector(xMax, yMax)}
 
-    # Return true if the point at the upper-right corner of pixel is within
-    # this node, otherwise return false.  pixel is a pair [nx, ny] of pixel 
-    # indices. globalBounds is the bounds of the whole tree, and pixelNums is 
-    # the pair [Nx, Ny] containing the total number of pixels in each direction.
+    # Return true if the point at the center of pixel is within this node, 
+    # otherwise return false.  pixel is a pair [nx, ny] of pixel indices. 
+    # globalBounds is the bounds of the whole tree, and pixelNums is the pair
+    # [Nx, Ny] containing the total number of pixels in each direction.
     pixelHit: (globalBounds, pixelNums, pixel) ->
+        [nx, ny] = pixel
         scaleX = (globalBounds.max.x - globalBounds.min.x) / pixelNums[0]
         scaleY = (globalBounds.max.y - globalBounds.min.y) / pixelNums[1]
-        # -- unfinished -- #
+        localPoint = new Vector(globalBounds.min.x + scaleX * (nx + 0.5) - @origin.x, globalBounds.max.y - scaleY * (ny + 0.5) - @origin.y)
+        hitX = 0.0 <= localPoint.dot(@basisX) <= @basisX.normSquared()
+        hitY = 0.0 <= localPoint.dot(@basisY) <= @basisY.normSquared()
+        hitX and hitY
+
+    # Return all pixels within the local bounds (all pixels that could possibly
+    # be hits).
+    allPixels: (globalBounds, pixelNums) ->
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
