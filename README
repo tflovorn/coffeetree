@@ -2,6 +2,8 @@ Construct a copy of the Pythagoras tree and display it on an html5 canvas.
 
 Organized to exploit the correspondence between squares in the Pythagoras tree and tree data structures.
 
+Written in CoffeeScript (http://jashkenas.github.com/coffee-script/)
+
 uses jasmine-node (https://github.com/mhevery/jasmine-node) for unit testing
 -run with:
 node lib/jasmine-node/cli.js . --coffee --verbose
