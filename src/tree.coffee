@@ -1,3 +1,5 @@
+
+
 # A two-dimensional vector (@x, @y)
 class Vector
     constructor: (@x, @y) ->
@@ -77,13 +79,13 @@ boundAll: (boundaries...) ->
 
 # A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree
-    constructor: (@rootLength, @angle, depth) ->
+    constructor: (@rootLength, @angle, order) ->
         # bottom left of root node is at origin of tree coordinates
         rootOrigin = new Vector(0.0, 0.0)
         rootX = new Vector(rootLength, 0.0)
         rootY = new Vector(0.0, rootLength)
         @root = new PythagorasNode(rootOrigin, rootX, rootY)
-        @expand(depth)
+        @expand(order)
 
     # Create nodes up to the given extra depth
     expand: (extraDepth) ->
@@ -99,4 +101,6 @@ class PythagorasTree
 
     toString: -> @root.toString()
 
-alert (new PythagorasTree(1.0, Math.PI / 4, 1)).toString()
+module.exports = {PythagorasTree: PythagorasTree}
+
+#alert (new PythagorasTree(1.0, Math.PI / 4, 1)).toString()
