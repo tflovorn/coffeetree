@@ -51,6 +51,14 @@ describe 'PythagorasTree', ->
         expect(checkPixels(firstTree.root.left, bounds, pixelNums, leftHits, leftMiss)).toBeTruthy()
         expect(checkPixels(firstTree.root.right, bounds, pixelNums, rightHits, rightMiss)).toBeTruthy()
 
+    it 'allPossiblePixels has known values on 45 degree first-order tree', ->
+        firstTree = new tree.PythagorasTree(1.0, Math.PI / 4, 1)
+        bounds = firstTree.bounds()
+        pixelNums = [8, 8]  # 8x8 pixel grid
+        pixels = firstTree.root.left.allPossiblePixels(bounds, pixelNums)
+        known = ([nx, ny] for nx in [0..3] for ny in [0..3])
+        expect(pixels).toEqual(known)
+
 # known is [xMin, yMin, xMax, yMax]
 checkHasBounds = (bounds, known) ->
     minCorrect = bounds.min.x == known[0] and bounds.min.y == known[1]

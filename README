@@ -4,6 +4,8 @@ Organized to exploit the correspondence between squares in the Pythagoras tree a
 
 Written in CoffeeScript (http://jashkenas.github.com/coffee-script/)
 
+Inspired by Buddhabrot (http://jashkenas.s3.amazonaws.com/misc/buddhabrot/buddhabrot.html)
+
 uses jasmine-node (https://github.com/mhevery/jasmine-node) for unit testing
 -run tests with:
 node lib/jasmine-node/cli.js . --coffee --verbose

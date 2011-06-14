@@ -89,7 +89,20 @@ class PythagorasNode
 
     # Return all pixels within the local bounds (all pixels that could possibly
     # be hits).
-    allPixels: (globalBounds, pixelNums) ->
+    allPossiblePixels: (globalBounds, pixelNums) ->
+        scaleX = (globalBounds.max.x - globalBounds.min.x) / pixelNums[0]
+        scaleY = (globalBounds.max.y - globalBounds.min.y) / pixelNums[1]
+        localBounds = @localBounds()
+        [bottomLeft, topRight] = [localBounds.min, localBounds.max]
+        nxBL = Math.floor((bottomLeft.x - globalBounds.min.x) / scaleX)
+        nyBL = Math.ceil((globalBounds.max.y - bottomLeft.y) / scaleY) - 1
+        nxTR = Math.ceil((topRight.x - globalBounds.min.x) / scaleX) - 1
+        nyTR = Math.floor((globalBounds.max.y - topRight.y) / scaleY)
+        ([nx, ny] for nx in [nxBL..nxTR] for ny in [nyTR..nyBL])
+
+    # Return all pixels this node actually hits.
+    allHitPixels: (globalBounds, pixelNums) ->
+        (pixel for pixel in @allPossiblePixels(globalBounds, pixelNums) when @pixelHit(globalBounds, pixelNums, pixel))
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
