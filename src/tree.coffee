@@ -112,8 +112,8 @@ class PythagorasNode
         nxTR = Math.ceil((topRight.x - globalBounds.min.x) / scaleX) - 1
         nyTR = Math.floor((globalBounds.max.y - topRight.y) / scaleY)
         candidates = []
-        for nx in [nyTR..nyBL]
-           for ny in [nxBL..nxTR]
+        for ny in [nyTR..nyBL]
+           for nx in [nxBL..nxTR]
                 candidates.push([nx, ny])
         candidates
 
