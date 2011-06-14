@@ -56,7 +56,10 @@ describe 'PythagorasTree', ->
         bounds = firstTree.bounds()
         pixelNums = [8, 8]  # 8x8 pixel grid
         pixels = firstTree.root.left.allPossiblePixels(bounds, pixelNums)
-        known = ([nx, ny] for nx in [0..3] for ny in [0..3])
+        known = []
+        for nx in [0..3]
+            for ny in [0..3]
+                known.push([nx, ny])
         expect(pixels).toEqual(known)
 
 # known is [xMin, yMin, xMax, yMax]

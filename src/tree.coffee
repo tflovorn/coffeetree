@@ -1,3 +1,16 @@
+NEW_PIXEL = [0, 0, 0, 0]
+GREY_PIXEL = [120, 120, 120, 120]
+
+checkPixel = (data, idx, pixel) ->
+    for i in [0...4] when data[idx + i] != pixel[i]
+        return false
+    true
+
+setPixel = (data, idx, pixel) ->
+    for i in [0...4]
+        data[idx + i] = pixel[i]
+    data
+
 # A two-dimensional vector (@x, @y)
 class Vector
     constructor: (@x, @y) ->
@@ -98,11 +111,26 @@ class PythagorasNode
         nyBL = Math.ceil((globalBounds.max.y - bottomLeft.y) / scaleY) - 1
         nxTR = Math.ceil((topRight.x - globalBounds.min.x) / scaleX) - 1
         nyTR = Math.floor((globalBounds.max.y - topRight.y) / scaleY)
-        ([nx, ny] for nx in [nxBL..nxTR] for ny in [nyTR..nyBL])
+        candidates = []
+        for nx in [nxBL..nxTR]
+            for ny in [nyTR..nyBL]
+                candidates.push([nx, ny])
+        candidates
 
     # Return all pixels this node actually hits.
     allHitPixels: (globalBounds, pixelNums) ->
         (pixel for pixel in @allPossiblePixels(globalBounds, pixelNums) when @pixelHit(globalBounds, pixelNums, pixel))
+
+    # Render the node and its children to the ImageData image.
+    render: (image, globalBounds) ->
+        pixelNums = [image.width, image.height]
+        data = image.data
+        for pixel in @allHitPixels(globalBounds, pixelNums)
+            idx = (pixel[0] * pixelNums[0] + pixel[1]) * 4
+            if checkPixel(data, idx, NEW_PIXEL)
+                setPixel(data, idx, GREY_PIXEL)
+        @left?.render(image, globalBounds)
+        @right?.render(image, globalBounds)
 
     toString: -> "{X:#{@basisX}, Y:#{@basisY}, O:#{@origin}, L:#{@left}, R:#{@right}}"
 
@@ -155,7 +183,16 @@ class PythagorasTree
 
     # Render the whole tree on to the given image
     render: (image) ->
+        @root.render(image, @bounds())
 
-    toString: -> @root.toString()
+    toString: ->
+        @root.toString()
 
-module.exports = {PythagorasTree: PythagorasTree, Vector:Vector}
+if document?
+    context = canvas.getContext '2d'
+    image = context.createImageData 600, 400
+    someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12)
+    someTree.render(image)
+    context.putImageData image, 0, 0
+
+module?.exports = {PythagorasTree: PythagorasTree, Vector:Vector}
