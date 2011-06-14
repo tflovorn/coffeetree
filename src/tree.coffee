@@ -112,8 +112,8 @@ class PythagorasNode
         nxTR = Math.ceil((topRight.x - globalBounds.min.x) / scaleX) - 1
         nyTR = Math.floor((globalBounds.max.y - topRight.y) / scaleY)
         candidates = []
-        for nx in [nxBL..nxTR]
-            for ny in [nyTR..nyBL]
+        for nx in [nyTR..nyBL]
+           for ny in [nxBL..nxTR]
                 candidates.push([nx, ny])
         candidates
 
@@ -190,9 +190,10 @@ class PythagorasTree
 
 if document?
     context = canvas.getContext '2d'
-    image = context.createImageData 600, 400
+    [width, height] = [canvas.width, canvas.height]
+    image = context.createImageData(width, height)
     someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12)
     someTree.render(image)
-    context.putImageData image, 0, 0
+    context.putImageData(image, 0, 0)
 
 module?.exports = {PythagorasTree: PythagorasTree, Vector:Vector}
