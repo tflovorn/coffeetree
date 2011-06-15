@@ -1,5 +1,6 @@
 NEW_PIXEL = [0, 0, 0, 0]
 GREY_PIXEL = [120, 120, 120, 120]
+BLACK_PIXEL = [0, 0, 0, 255]
 
 checkPixel = (data, idx, pixel) ->
     for i in [0...4] when data[idx + i] != pixel[i]
@@ -37,7 +38,7 @@ class Vector
 # @basisX and @basisY.  These bases have length equal to the square's side
 # length.  Each node may have two child nodes, @left and @right.
 class PythagorasNode
-    constructor: (@origin, @basisX, @basisY, @left = null, @right = null) ->
+    constructor: (@origin, @basisX, @basisY, @color, @left = null, @right = null) ->
 
     # Call spawn on @left and @right, if they exist.  If not, create them using
     # the given angle (in radians).  Return a list of all new nodes created by
@@ -51,7 +52,7 @@ class PythagorasNode
             leftOrigin = @origin.add(@basisY)
             leftX = @basisX.mult(cos * cos).add(@basisY.mult(sin * cos))
             leftY = @basisX.mult(-sin * cos).add(@basisY.mult(cos * cos))
-            @left = new PythagorasNode(leftOrigin, leftX, leftY)
+            @left = new PythagorasNode(leftOrigin, leftX, leftY, @color)
             newNodes.push(@left)
         if @right?
             newNodes.concat(@right.spawn angle)
@@ -59,7 +60,7 @@ class PythagorasNode
             rightOrigin = @origin.add(@basisX.mult(cos * cos).add(@basisY.mult(sin * cos + 1)))
             rightX = @basisX.mult(sin * sin).sub(@basisY.mult(sin * cos))
             rightY = @basisX.mult(sin * cos).add(@basisY.mult(sin * sin))
-            @right = new PythagorasNode(rightOrigin, rightX, rightY)
+            @right = new PythagorasNode(rightOrigin, rightX, rightY, @color)
             newNodes.push(@right)
         return newNodes
 
@@ -132,7 +133,7 @@ class PythagorasNode
         for pixel in @allHitPixels(globalBounds, pixelNums)
             idx = (pixel[1] * pixelNums[0] + pixel[0]) * 4
             if checkPixel(data, idx, NEW_PIXEL)
-                setPixel(data, idx, GREY_PIXEL)
+                setPixel(data, idx, @color)
         @left?.render(image, globalBounds)
         @right?.render(image, globalBounds)
 
@@ -167,12 +168,12 @@ boundAll = (boundaries...) ->
 
 # A representation of the Pythagoras tree in its own coordinate system.
 class PythagorasTree
-    constructor: (@rootLength, @angle, order) ->
+    constructor: (@rootLength, @angle, order, color) ->
         # bottom left of root node is at origin of tree coordinates
         rootOrigin = new Vector(0.0, 0.0)
         rootX = new Vector(rootLength, 0.0)
         rootY = new Vector(0.0, rootLength)
-        @root = new PythagorasNode(rootOrigin, rootX, rootY)
+        @root = new PythagorasNode(rootOrigin, rootX, rootY, color)
         @expand(order)
 
     # Create nodes up to the given extra depth
@@ -196,8 +197,30 @@ if document?
     context = canvas.getContext '2d'
     [width, height] = [canvas.width, canvas.height]
     image = context.createImageData(width, height)
-    someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12)
+    someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12, BLACK_PIXEL)
     someTree.render(image)
     context.putImageData(image, 0, 0)
+    # attaching this to document seems like a ridiculous hack
+    # (but it works, so...)
+    document.newInput = ->
+        context = canvas.getContext '2d'
+        [width, height] = [canvas.width, canvas.height]
+        image = context.createImageData(width, height)
+        color = cutHex(settings.setcolor.value)
+        rgb = [hexToR(color), hexToG(color), hexToB(color), 255]
+        angle = settings.setangle.value * Math.PI / 180 # want radians
+        someTree = new PythagorasTree(1.0, angle, 12, rgb)
+        someTree.render(image)
+        context.putImageData(image, 0, 0)
+
+# stolen shamelessly from http://www.javascripter.net/faq/hextorgb.htm
+hexToR = (h) ->
+    parseInt((cutHex(h)).substring(0,2),16)
+hexToG = (h)->
+    parseInt((cutHex(h)).substring(2,4),16)
+hexToB = (h) ->
+    parseInt((cutHex(h)).substring(4,6),16)
+cutHex = (h) ->
+    if h.charAt(0)=="#" then h.substring(1,7) else h
 
 module?.exports = {PythagorasTree: PythagorasTree, Vector:Vector}

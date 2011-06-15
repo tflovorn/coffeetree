@@ -5,7 +5,25 @@
     <title>Pythagoras Tree</title>
 </head>
 <body>
-    <canvas id="canvas" width="400" height="400"></canvas>
+    <form id=settings>
+        <fieldset>
+            <legend>Tree Settings</legend>
+            <ol>
+                <li>
+                    <label for=setcolor>Color</label>
+                    <input id=setcolor name=setcolor type=color value="#BBBBBB">
+                </li>
+                <li>
+                    <label for=setangle>Angle (more than 0, less than 90)</label>
+                    <input id=setangle name=setangle type=number value="45">
+                </li>
+            </ol>
+        </fieldset>
+            <button type=button onclick="document.newInput()">Grow it!</button>
+        </fieldset>
+    </form>
+    <br>
+    <canvas id="canvas" width="600" height="400"></canvas>
     <script src="lib/tree.js"></script>
 </body>
 </html>
