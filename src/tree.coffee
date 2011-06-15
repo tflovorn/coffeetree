@@ -95,6 +95,8 @@ class PythagorasNode
         [nx, ny] = pixel
         scaleX = (globalBounds.max.x - globalBounds.min.x) / pixelNums[0]
         scaleY = (globalBounds.max.y - globalBounds.min.y) / pixelNums[1]
+        scale = Math.max(scaleX, scaleY)
+        [scaleX, scaleY] = [scale, scale]
         localPoint = new Vector(globalBounds.min.x + scaleX * (nx + 0.5) - @origin.x, globalBounds.max.y - scaleY * (ny + 0.5) - @origin.y)
         hitX = 0.0 <= localPoint.dot(@basisX) <= @basisX.normSquared()
         hitY = 0.0 <= localPoint.dot(@basisY) <= @basisY.normSquared()
@@ -105,6 +107,8 @@ class PythagorasNode
     allPossiblePixels: (globalBounds, pixelNums) ->
         scaleX = (globalBounds.max.x - globalBounds.min.x) / pixelNums[0]
         scaleY = (globalBounds.max.y - globalBounds.min.y) / pixelNums[1]
+        scale = Math.max(scaleX, scaleY)
+        [scaleX, scaleY] = [scale, scale]
         localBounds = @localBounds()
         [bottomLeft, topRight] = [localBounds.min, localBounds.max]
         nxBL = Math.floor((bottomLeft.x - globalBounds.min.x) / scaleX)
@@ -192,7 +196,7 @@ if document?
     context = canvas.getContext '2d'
     [width, height] = [canvas.width, canvas.height]
     image = context.createImageData(width, height)
-    someTree = new PythagorasTree(1.0, Math.PI / 6.0, 12)
+    someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12)
     someTree.render(image)
     context.putImageData(image, 0, 0)
 
