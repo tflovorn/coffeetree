@@ -55,12 +55,14 @@ describe 'PythagorasTree', ->
         firstTree = new tree.PythagorasTree(1.0, Math.PI / 4, 1)
         bounds = firstTree.bounds()
         pixelNums = [8, 8]  # 8x8 pixel grid
-        pixelRoot = firstTree.root.allPossiblePixels(bounds, pixelNums)
-        for ny in [4..7]
-            for nx in [4..7]
-                expect([nx, ny]) in pixelRoot
-        pixels = firstTree.root.left.allPossiblePixels(bounds, pixelNums)
+        pixels = firstTree.root.allPossiblePixels(bounds, pixelNums)
         known = []
+        for ny in [4..7]
+            for nx in [2..5]
+                known.push([nx, ny])
+        expect(pixels).toEqual(known)
+        known = []
+        pixels = firstTree.root.left.allPossiblePixels(bounds, pixelNums)
         for ny in [0..3]
             for nx in [0..3]
                 known.push([nx, ny])

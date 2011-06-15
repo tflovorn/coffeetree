@@ -126,7 +126,7 @@ class PythagorasNode
         pixelNums = [image.width, image.height]
         data = image.data
         for pixel in @allHitPixels(globalBounds, pixelNums)
-            idx = (pixel[0] * pixelNums[0] + pixel[1]) * 4
+            idx = (pixel[1] * pixelNums[0] + pixel[0]) * 4
             if checkPixel(data, idx, NEW_PIXEL)
                 setPixel(data, idx, GREY_PIXEL)
         @left?.render(image, globalBounds)
@@ -192,7 +192,7 @@ if document?
     context = canvas.getContext '2d'
     [width, height] = [canvas.width, canvas.height]
     image = context.createImageData(width, height)
-    someTree = new PythagorasTree(1.0, Math.PI / 4.0, 12)
+    someTree = new PythagorasTree(1.0, Math.PI / 6.0, 12)
     someTree.render(image)
     context.putImageData(image, 0, 0)
 
